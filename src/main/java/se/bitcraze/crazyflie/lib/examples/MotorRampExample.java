@@ -76,6 +76,8 @@ public class MotorRampExample {
         float roll = 0;
         float yawrate = 0;
 
+        // send packet with zero thrust to arm the copter
+        this.mCrazyflie.sendPacket(new CommanderPacket(0, 0, 0, (char) 0));
         while (thrust >= 15000) {
             // self._cf.commander.send_setpoint(roll, pitch, yawrate, thrust)
             System.out.println("sendPacket: " + thrust);
