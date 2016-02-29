@@ -70,10 +70,8 @@ public class LoggingExample extends ConnectionAdapter{
         System.out.println("Setup finished for " + connectionInfo);
 
         // The definition of the logconfig can be made before the setup is finished
-        final LogConfig lgStab = new LogConfig("Stabilizer", 10);
-        lgStab.addVariable("stabilizer.roll", VariableType.FLOAT);
-        lgStab.addVariable("stabilizer.pitch", VariableType.FLOAT);
-        lgStab.addVariable("stabilizer.yaw", VariableType.FLOAT);
+        final LogConfig lcBattery = new LogConfig("Battery", 1000);
+        lcBattery.addVariable("pm.vbat", VariableType.FLOAT);
 
         /**
          *  Adding the configuration cannot be done until a Crazyflie is connected and
@@ -85,7 +83,7 @@ public class LoggingExample extends ConnectionAdapter{
 
         if (logg != null) {
             //self._cf.log.add_config(self._lg_stab)
-            logg.addConfig(lgStab);
+            logg.addConfig(lcBattery);
 
             /*
             # This callback will receive the data
@@ -96,7 +94,6 @@ public class LoggingExample extends ConnectionAdapter{
 
             logg.addLogListener(new LogListener() {
 
-                @Override
                 public void logConfigAdded(LogConfig logConfig) {
                     String msg = "";
                     if(logConfig.isAdded()) {
@@ -107,12 +104,10 @@ public class LoggingExample extends ConnectionAdapter{
                     System.out.println("LogConfig '" + logConfig.getName() + msg);
                 }
 
-                @Override
                 public void logConfigError(LogConfig logConfig) {
                     System.err.println("Error when logging '" + logConfig.getName() + "': " + logConfig.getErrNo());
                 }
 
-                @Override
                 public void logConfigStarted(LogConfig logConfig) {
                     String msg = "";
                     if(logConfig.isStarted()) {
@@ -123,7 +118,6 @@ public class LoggingExample extends ConnectionAdapter{
                     System.out.println("LogConfig '" + logConfig.getName() + msg);
                 }
 
-                @Override
                 public void logDataReceived(LogConfig logConfig, Map<String, Number> data) {
                     System.out.println("LogConfig '" + logConfig.getName()  + "', data : ");
                     // TODO sort?
@@ -135,7 +129,7 @@ public class LoggingExample extends ConnectionAdapter{
             });
 
             // Start the logging
-            logg.start(lgStab);
+            logg.start(lcBattery);
 
             /*
             try:
@@ -153,7 +147,8 @@ public class LoggingExample extends ConnectionAdapter{
 
                 @Override
                 public void run() {
-                    logg.stop(lgStab);
+                    logg.stop(lcBattery);
+                    logg.delete(lcBattery);
                 }
 
             }, 5000);
