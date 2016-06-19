@@ -35,8 +35,12 @@ public class ConsoleExample {
 
             @Override
             public void dataReceived(CrtpPacket packet) {
-                System.out.println(ConsolePacket.parse(packet.getPayload()).getText());
-                consoleBuffer.append(ConsolePacket.parse(packet.getPayload()).getText());
+                //TODO: trying to filter out empty console packets
+                String text = ConsolePacket.parse(packet.getPayload()).getText();
+                if (!text.isEmpty() && !"".equals(text)) {
+                    System.out.println(text);
+                    consoleBuffer.append(text);
+                }
             }
         });
 
@@ -52,7 +56,7 @@ public class ConsoleExample {
             @Override
             public void run() {
                 System.out.println("Console Packets: " + consoleBuffer.toString());
-                System.out.println("Disconnecting after 10 seconds...");
+                System.out.println("Disconnected after 10 seconds...");
                 mCrazyflie.disconnect();
             }
 

@@ -23,7 +23,7 @@ public class MotorRampExample {
 
         mCrazyflie = new Crazyflie(new RadioDriver(new UsbLinkJava()));
 
-        mCrazyflie.addConnectionListener(new ConnectionAdapter() {
+        mCrazyflie.getDriver().addConnectionListener(new ConnectionAdapter() {
 
             /**
              * This callback is called from the Crazyflie API when a Crazyflie

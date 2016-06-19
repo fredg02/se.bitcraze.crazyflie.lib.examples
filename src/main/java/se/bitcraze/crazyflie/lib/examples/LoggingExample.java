@@ -43,7 +43,7 @@ public class LoggingExample extends ConnectionAdapter{
         //TODO: do not use cache
 
         // Connect some callbacks from the Crazyflie API
-        mCrazyflie.addConnectionListener(this);
+        mCrazyflie.getDriver().addConnectionListener(this);
 
         System.out.println("Connecting to " + connectionData);
 
@@ -118,11 +118,11 @@ public class LoggingExample extends ConnectionAdapter{
                     System.out.println("LogConfig '" + logConfig.getName() + msg);
                 }
 
-                public void logDataReceived(LogConfig logConfig, Map<String, Number> data) {
-                    System.out.println("LogConfig '" + logConfig.getName()  + "', data : ");
+                public void logDataReceived(LogConfig logConfig, Map<String, Number> data, int timestamp) {
+                    System.out.println("LogConfig '" + logConfig.getName()  + "', timestamp: " + timestamp + ", data : ");
                     // TODO sort?
                     for (Entry<String, Number> entry : data.entrySet()) {
-                        System.out.println("Name: " + entry.getKey() + ", data: " + entry.getValue());
+                        System.out.println("\t Name: " + entry.getKey() + ", data: " + entry.getValue());
                     }
                 }
 
@@ -210,7 +210,7 @@ public class LoggingExample extends ConnectionAdapter{
 //        }
 
         List<ConnectionData> foundCrazyflies = new ArrayList<ConnectionData>();
-        foundCrazyflies.add(new ConnectionData(10, 0));
+        foundCrazyflies.add(new ConnectionData(85, 0));
 
         if (foundCrazyflies.size() > 0) {
             LoggingExample loggingExample = new LoggingExample(foundCrazyflies.get(0));

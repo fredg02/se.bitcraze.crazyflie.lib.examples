@@ -2,6 +2,7 @@ package se.bitcraze.crazyflie.lib.examples;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import se.bitcraze.crazyflie.lib.crazyflie.ConnectionAdapter;
@@ -35,7 +36,7 @@ public class ParamExample extends ConnectionAdapter{
         //TODO: do not use cache
 
         // Connect some callbacks from the Crazyflie API
-        mCrazyflie.addConnectionListener(this);
+        mCrazyflie.getDriver().addConnectionListener(this);
 
         System.out.println("Connecting to " + connectionData);
 
@@ -63,35 +64,38 @@ public class ParamExample extends ConnectionAdapter{
 
         // Print the param TOC
         Toc paramToc = this.mCrazyflie.getParam().getToc();
-        for (String group : paramToc.getTocElementMap().keySet()) {
-            System.out.println(group);
-            for (String name : paramToc.getTocElementMap().get(group).keySet()) {
-                System.out.println("\t" + name);
-                mParamCheckList.add(group + "." + name);
-                mParamGroups.add(group);
+        List<String> list = new ArrayList<String>(paramToc.getTocElementMap().keySet());
+        Collections.sort(list);
+        
+        for (String completeName : list) {
+            System.out.println(completeName);
+            mParamCheckList.add(completeName);
+            
+            String[] split = completeName.split("\\.");
+            String group = split[0];
+            
+            mParamGroups.add(group);
 
-                // For every group, register the callback
-                this.mCrazyflie.getParam().addParamListener(new ParamListener(group, null) {
-                    @Override
-                    public void updated(String name, Number value) {
-                       System.out.println(name + ": " + value);
+            // For every group, register the callback
+            this.mCrazyflie.getParam().addParamListener(new ParamListener(group, null) {
+                @Override
+                public void updated(String name, Number value) {
+                    System.out.println(name + ": " + value);
 
-                       // Remove each parameter from the list and close the link when all are fetched
-                       mParamCheckList.remove(name);
-                       if (mParamCheckList.size() == 0) {
-                           System.out.println("Have fetched all parameter values.");
-                           // First remove all the group callbacks
+                    // Remove each parameter from the list and close the link when all are fetched
+                    mParamCheckList.remove(name);
+                    if (mParamCheckList.size() == 0) {
+                        System.out.println("Have fetched all parameter values.");
+                        // First remove all the group callbacks
 
-                           for (String group : mParamGroups) {
-                               mCrazyflie.getParam().removeParamListeners(group, null);
-                           }
+                        for (String group : mParamGroups) {
+                            mCrazyflie.getParam().removeParamListeners(group, null);
+                        }
 
-                           setRandomValue();
-                       }
+                        setRandomValue();
                     }
-                });
-            }
-
+                }
+            });
         }
 
         // You can also register a callback for a specific group.name combo

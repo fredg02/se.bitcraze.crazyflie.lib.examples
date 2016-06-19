@@ -31,7 +31,7 @@ public class CrazyflieWrapper {
             return;
         }
 
-        mCrazyflie.addConnectionListener(new ConnectionAdapter() {
+        mCrazyflie.getDriver().addConnectionListener(new ConnectionAdapter() {
 
             public void setupFinished(String connectionInfo) {
                 System.out.println("SETUP FINISHED: " + connectionInfo);
